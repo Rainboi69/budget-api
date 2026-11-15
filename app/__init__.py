@@ -1,23 +1,27 @@
-import os
 from flask import Flask
-from dotenv import load_dotenv
+from app.config import DevelopmentConfig, TestingConfig, ProductionConfig
 from app.extensions import db, migrate
 
-load_dotenv()
+CONFIGS = {
+    "development": DevelopmentConfig,
+    "testing": TestingConfig,
+    "production": ProductionConfig,
+}
 
 
-def create_app():
+def create_app(config_name: str):
     app = Flask(__name__)
-    app.config["SECRET_KEY"] = os.environ["SECRET_KEY"]
-    app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get(
-        "DATABASE_URL", "sqlite:///budget.db"
-    )
-    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+    app.config.from_object(CONFIGS[config_name])
+
+    if config_name != "testing" and not app.config.get("SECRET_KEY"):
+        raise RuntimeError("SECRET_KEY must be set")
+    if config_name == "production" and not app.config.get("SQLALCHEMY_DATABASE_URI"):
+        raise RuntimeError("DATABASE_URL must be set in production")
 
     db.init_app(app)
     migrate.init_app(app, db)
 
-    from app import models  # noqa: F401  (so migrations see the tables)
+    from app import models  # noqa: F401
     from app.routes import api
     app.register_blueprint(api)
 

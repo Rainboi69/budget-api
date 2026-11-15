@@ -25,7 +25,7 @@ def make_token(user):
         "iat": datetime.now(timezone.utc),
         "exp": datetime.now(timezone.utc) + timedelta(hours=1),
     }
-    return jwt.encode(payload, current_app.config["SECRET_KEY"], algorithm="HS256")
+    return jwt.encode(payload, current_app.config["JWT_SECRET"], algorithm="HS256")
 
 
 def token_required(fn):
@@ -38,7 +38,7 @@ def token_required(fn):
         try:
             data = jwt.decode(
                 parts[1],
-                current_app.config["SECRET_KEY"],
+                current_app.config["JWT_SECRET"],
                 algorithms=["HS256"],
             )
         except jwt.InvalidTokenError:  # covers expired and tampered tokens

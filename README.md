@@ -53,3 +53,11 @@ Errors: 400 bad input, 401 missing or invalid token, 403 not your budget, 404 no
 - `app/routes.py`: `api` blueprint with auth and budget endpoints
 - `migrations/`: database migration history
 - `wsgi.py`: entrypoint
+
+## Database & migrations
+
+The schema is managed with Flask-Migrate. The migration files are committed in `migrations/`, so a fresh clone does not need `flask db init`.
+
+- **First-time setup:** run `flask db upgrade`. This creates the `user` and `budget` tables.
+- **Where the data lives:** in development, the database is a local SQLite file in `instance/` (ignored by Git). In production it comes from `DATABASE_URL`.
+- **After changing a model:** run `flask db migrate -m "describe the change"`, review the new file in `migrations/versions/`, then run `flask db upgrade` and commit the migration.

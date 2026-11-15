@@ -15,3 +15,6 @@ Flask backend for tracking planned vs. actual monthly spending.
 2. Run `pip install -r requirements.txt`.
 3. Copy `.env.example` to `.env` and fill in the values.
 
+## Run
+
+Start the development server with `flask run --debug`.

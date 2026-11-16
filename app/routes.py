@@ -19,6 +19,11 @@ def index():
     return jsonify({"status": "ok", "message": "Budget API is running"})
 
 
+@api.route("/health", methods=["GET"])
+def health():
+    return jsonify({"status": "healthy"}), 200
+
+
 def make_token(user):
     payload = {
         "sub": str(user.id),

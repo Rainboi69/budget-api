@@ -72,7 +72,7 @@ def register():
 
     email = email.strip().lower()
     if User.query.filter_by(email=email).first():
-        return jsonify({"error": "email already registered"}), 400
+        return jsonify({"error": "email already registered"}), 409
 
     user = User(email=email)
     user.set_password(password)

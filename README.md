@@ -42,7 +42,7 @@ Live URL: _coming soon_
 | DELETE | `/budgets/{id}` | Owner only | 204 |
 
 Send the token from login as `Authorization: Bearer <token>`.
-Errors: 400 bad input, 401 missing or invalid token, 403 not your budget, 404 not found.
+Errors: 400 bad input, 401 missing or invalid token, 403 not your budget, 404 not found, 409 email already registered.
 
 ## Project structure
 

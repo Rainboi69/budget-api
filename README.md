@@ -61,3 +61,11 @@ The schema is managed with Flask-Migrate. The migration files are committed in `
 - **First-time setup:** run `flask db upgrade`. This creates the `user` and `budget` tables.
 - **Where the data lives:** in development, the database is a local SQLite file in `instance/` (ignored by Git). In production it comes from `DATABASE_URL`.
 - **After changing a model:** run `flask db migrate -m "describe the change"`, review the new file in `migrations/versions/`, then run `flask db upgrade` and commit the migration.
+
+## Security notes
+
+- Passwords are never stored in plain text. `User.set_password` stores a salted scrypt hash (Werkzeug's default), and `User.check_password` verifies against it.
+- Each hash starts with `scrypt:` and includes its own random salt, so two users with the same password get different hashes.
+- `User.to_dict()` leaves out `password_hash`, so a hash never appears in an API response.
+- Login returns the same generic `401` for a wrong password or an unknown email.
+- Tokens are signed with `JWT_SECRET` and expire after one hour.

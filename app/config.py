@@ -10,6 +10,7 @@ class Config:
     SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL")
     SECRET_KEY = os.getenv("SECRET_KEY")
     JWT_SECRET = os.getenv("JWT_SECRET") or os.getenv("SECRET_KEY")
+    JWT_EXPIRES_MINUTES = int(os.getenv("JWT_EXPIRES_MINUTES", "60"))
 
 
 class DevelopmentConfig(Config):

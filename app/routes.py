@@ -27,6 +27,7 @@ def health():
 def make_token(user):
     payload = {
         "sub": str(user.id),
+        "role": user.role,
         "iat": datetime.now(timezone.utc),
         "exp": datetime.now(timezone.utc)
         + timedelta(minutes=current_app.config["JWT_EXPIRES_MINUTES"]),

@@ -69,3 +69,17 @@ The schema is managed with Flask-Migrate. The migration files are committed in `
 - `User.to_dict()` leaves out `password_hash`, so a hash never appears in an API response.
 - Login returns the same generic `401` for a wrong password or an unknown email.
 - Tokens are signed with `JWT_SECRET` and expire after one hour.
+
+## Run with Docker (recommended)
+
+Requires Docker Desktop (or Docker Engine with the Compose plugin).
+
+1. Clone the repo and enter it:
+   `git clone https://github.com/Rainboi69/budget-api.git && cd budget-api`
+2. Start the app and a Postgres database:
+   `docker compose up --build`
+3. Wait for the log line `Listening at: http://0.0.0.0:8000`, then check it:
+   `curl http://localhost:8000/health`
+4. Stop it with Ctrl+C, then `docker compose down` (add `-v` to also delete the database volume).
+
+The compose file runs database migrations automatically on startup. Set your own secret with `SECRET_KEY=your-long-random-string docker compose up --build`. If you don't, a throwaway local default is used, which is fine for trying it out but not for a real deployment.

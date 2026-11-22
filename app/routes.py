@@ -110,6 +110,30 @@ def profile():
     return jsonify(g.current_user.to_dict()), 200
 
 
+@api.route("/auth/profile", methods=["PATCH"])
+@token_required
+def update_profile():
+    body = request.get_json(silent=True)
+    if not isinstance(body, dict):
+        return jsonify({"error": "JSON body required"}), 400
+
+    # only email is editable; any other key (role, password_hash, id) is ignored
+    if "email" not in body:
+        return jsonify({"error": "provide email"}), 400
+    email = body.get("email")
+    if not isinstance(email, str) or len(email) > 254 or not EMAIL_RE.match(email):
+        return jsonify({"error": "valid email required"}), 400
+    email = email.strip().lower()
+
+    taken = User.query.filter_by(email=email).first()
+    if taken and taken.id != g.current_user.id:
+        return jsonify({"error": "email already registered"}), 409
+
+    g.current_user.email = email
+    db.session.commit()
+    return jsonify(g.current_user.to_dict()), 200
+
+
 MONTH_RE = re.compile(r"^\d{4}-(0[1-9]|1[0-2])$")
 
 

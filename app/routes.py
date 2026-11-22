@@ -62,6 +62,18 @@ def token_required(fn):
     return wrapper
 
 
+def admin_required(fn):
+    @wraps(fn)
+    def wrapper(*args, **kwargs):
+        # g.current_user is loaded from the database on each request,
+        # so a demoted admin loses access immediately, not at token expiry
+        if g.current_user.role != "admin":
+            return jsonify({"error": "admin only"}), 403
+        return fn(*args, **kwargs)
+
+    return wrapper
+
+
 @api.route("/auth/register", methods=["POST"])
 def register():
     body = request.get_json(silent=True)
@@ -232,3 +244,11 @@ def delete_budget(budget_id):
     db.session.delete(budget)
     db.session.commit()
     return "", 204
+
+
+@api.route("/admin/users", methods=["GET"])
+@token_required
+@admin_required
+def list_users():
+    users = User.query.order_by(User.id).all()
+    return jsonify([u.to_dict() for u in users]), 200

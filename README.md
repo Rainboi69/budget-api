@@ -3,7 +3,7 @@
 Flask backend for tracking planned vs. actual monthly spending. Each user
 registers, logs in, and manages their own monthly budgets.
 
-Live URL: _coming soon_
+Live URL: https://budget-api-3ftq.onrender.com
 
 ## Setup
 

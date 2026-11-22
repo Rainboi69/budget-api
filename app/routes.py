@@ -1,4 +1,3 @@
-import os
 import re
 from datetime import datetime, timedelta, timezone
 from functools import wraps
@@ -50,7 +49,11 @@ def token_required(fn):
             )
         except jwt.InvalidTokenError:  # covers expired and tampered tokens
             return jsonify({"error": "invalid or expired token"}), 401
-        user = db.session.get(User, int(data["sub"]))
+        try:
+            user_id = int(data["sub"])
+        except (KeyError, ValueError):
+            return jsonify({"error": "invalid or expired token"}), 401
+        user = db.session.get(User, user_id)
         if user is None:
             return jsonify({"error": "invalid or expired token"}), 401
         g.current_user = user

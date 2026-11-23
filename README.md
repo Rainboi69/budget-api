@@ -83,3 +83,12 @@ Requires Docker Desktop (or Docker Engine with the Compose plugin).
 4. Stop it with Ctrl+C, then `docker compose down` (add `-v` to also delete the database volume).
 
 The compose file runs database migrations automatically on startup. Set your own secret with `SECRET_KEY=your-long-random-string docker compose up --build`. If you don't, a throwaway local default is used, which is fine for trying it out but not for a real deployment.
+
+## Auth test evidence
+
+Run against the local server (`flask --app wsgi.py run`).
+
+- **Hash-only storage:** registering `hash-test@example.com` returns 201. In `flask --app wsgi.py shell`, `password_hash` starts with `scrypt:` and the plaintext password is not in it.
+- **Wrong password:** `POST /auth/login` with a wrong password returns 401, `{"error":"invalid email or password"}`.
+- **Unknown email:** returns the same 401 and message, so the response doesn't reveal which emails exist.
+- **Correct password:** returns 200 with a token.

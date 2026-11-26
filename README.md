@@ -92,3 +92,11 @@ Run against the local server (`flask --app wsgi.py run`).
 - **Wrong password:** `POST /auth/login` with a wrong password returns 401, `{"error":"invalid email or password"}`.
 - **Unknown email:** returns the same 401 and message, so the response doesn't reveal which emails exist.
 - **Correct password:** returns 200 with a token.
+
+## Budget ownership test evidence
+
+Run against the local server with two users.
+
+- **Owner comes from the token:** `POST /budgets` as Bob with `"user_id": 7` in the body returns 201, and the budget appears only in Bob's list. The `user_id` in the body is ignored.
+- **Create returns the record:** the 201 response contains the new budget (`id`, `month`, `planned`, `actual`, `difference`).
+- **Lists are scoped to the caller:** `GET /budgets` as Bob returns only Bob's budget. The same request as Alice returns only Alice's budgets and does not include Bob's.

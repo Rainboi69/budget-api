@@ -109,3 +109,13 @@ Run against the local server with two users.
 - **Missing budget:** `GET /budgets/9999` returns 404, `{"error":"budget not found"}`.
 - **Another user's budget:** `GET /budgets/3` as a different user returns 403, `{"error":"forbidden"}`.
 - **Order of checks:** a missing id returns 404 first, then ownership is checked and returns 403.
+
+## Budget update and delete test evidence
+
+Run against the local server with two users.
+
+- **Update persists:** `PATCH /budgets/4` as the owner with `{"planned":1500,"actual":1000}` returns 200 with the updated budget. A following `GET` returns the same values.
+- **Bad input:** a non-numeric value returns 400, `{"error":"planned and actual must be non-negative numbers"}`. An empty body returns 400, `{"error":"provide planned and/or actual"}`.
+- **Missing id:** `PATCH /budgets/9999` returns 404, `{"error":"budget not found"}`.
+- **Delete removes the row:** `DELETE /budgets/<id>` as the owner returns 204 with no body. A following `GET` and a second `DELETE` both return 404.
+- **No authorization gap:** another user's `PATCH` and `DELETE` on the owner's budget both return 403, `{"error":"forbidden"}`, and the budget is unchanged.

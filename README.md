@@ -100,3 +100,12 @@ Run against the local server with two users.
 - **Owner comes from the token:** `POST /budgets` as Bob with `"user_id": 7` in the body returns 201, and the budget appears only in Bob's list. The `user_id` in the body is ignored.
 - **Create returns the record:** the 201 response contains the new budget (`id`, `month`, `planned`, `actual`, `difference`).
 - **Lists are scoped to the caller:** `GET /budgets` as Bob returns only Bob's budget. The same request as Alice returns only Alice's budgets and does not include Bob's.
+
+## Budget read and error test evidence
+
+Run against the local server with two users.
+
+- **Owner reads own budget:** `GET /budgets/3` as the owner returns 200 with the budget.
+- **Missing budget:** `GET /budgets/9999` returns 404, `{"error":"budget not found"}`.
+- **Another user's budget:** `GET /budgets/3` as a different user returns 403, `{"error":"forbidden"}`.
+- **Order of checks:** a missing id returns 404 first, then ownership is checked and returns 403.
